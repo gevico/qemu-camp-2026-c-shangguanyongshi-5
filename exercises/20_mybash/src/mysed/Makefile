@@ -14,11 +14,11 @@ all: $(LIB_PATH)
 
 $(LIB_PATH): $(OBJS)
 	@mkdir -p $(OBJDIR)
-	ar rcs $@ $^
+	@ar rcs $@ $^
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	@rm -rf $(OBJDIR)/*.o $(LIB_PATH)
