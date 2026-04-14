@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #include "common.h"
@@ -58,8 +57,14 @@ int is_builtin_command(char **args) {
   if (args[0] == NULL)
     return 0;
 
-  // TODO: 在这里添加你的代码
-  // I AM NOT DONE
+  if (strcmp(args[0], "cd") == 0) {
+    execute_cd(args);
+    return 1;
+  }
+  if (strcmp(args[0], "exit") == 0) {
+    execute_exit();
+    return 1;
+  }
 
   return 0;
 }
@@ -68,7 +73,7 @@ int parse_input(char *input, char **args) {
   int i = 0;
   int in_quotes = 0;
   char *buf = input;
-  char *arg_start = NULL;
+  // char *arg_start = NULL;
   char arg_buf[MAX_INPUT];  // 临时存储当前正在解析的参数
   int arg_buf_idx = 0;
 
@@ -77,10 +82,19 @@ int parse_input(char *input, char **args) {
   while (*buf != '\0' && i < MAX_ARGS - 1) {
       char c = *buf;
 
-        // TODO: 在这里添加你的代码
-        // I AM NOT DONE
+    if (c == '\"') {
+      in_quotes = !in_quotes;
+    } else if (!in_quotes && (c == ' ' || c == '\t')) {
+      if (arg_buf_idx > 0) {
+        arg_buf[arg_buf_idx] = '\0';
+        args[i++] = strdup(arg_buf);
+        arg_buf_idx = 0;
+      }
+    } else if (arg_buf_idx < MAX_INPUT - 1) {
+      arg_buf[arg_buf_idx++] = c;
+    }
 
-      buf++;
+    buf++;
   }
 
   // 处理最后一个参数（循环结束后可能还有未加入的）
@@ -161,22 +175,22 @@ int main(int argc, char *argv[]) {
   } 
   else {
     // 🔁 原有的交互式命令行模式
-    while (1) {
-      printf("mybash$ ");
-      fflush(stdout);
+  while (1) {
+    printf("mybash$ ");
+    fflush(stdout);
 
-      if (fgets(input, sizeof(input), stdin) == NULL) {
-        printf("\n");
-        break;
-      }
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+      printf("\n");
+      break;
+    }
 
-      input[strcspn(input, "\n")] = '\0';
+    input[strcspn(input, "\n")] = '\0';
 
       int argc = parse_input(input, args);
 
       if (argc == 0) {
-        continue;
-      }
+      continue;
+    }
 
       if (is_builtin_command(args)) {
         continue;

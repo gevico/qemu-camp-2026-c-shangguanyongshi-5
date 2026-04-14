@@ -8,8 +8,21 @@ typedef struct {
 } Student;
 
 void insertion_sort(Student students[], int n) {
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+    for (int i = 1; i < n; ++i) {
+      int j = i;
+      while (j > 0 && students[j].score > students[j - 1].score) {
+        char tmp_name[20];
+        int tmp_score = students[j - 1].score;
+        students[j - 1].score = students[j].score;
+        students[j].score = tmp_score;
+        for (int k = 0; k < 20; ++k) {
+          tmp_name[k] = students[j - 1].name[k];
+          students[j - 1].name[k] = students[j].name[k];
+          students[j].name[k] = tmp_name[k];
+        }
+        --j;
+      }
+    }
 }
 
 int main(void) {

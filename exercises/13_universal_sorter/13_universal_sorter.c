@@ -40,8 +40,59 @@ void processFile(const char *filename) {
     printf("=== 处理数据来自: %s ===\n", filename);
 
     switch (choice) {
-        // TODO: 在这里添加你的代码
-        // I AM NOT DONE
+      case 1: {
+        int arr[20];
+        int i;
+        for (i = 0; i < n; i++) {
+            if (fscanf(fin, "%d", &arr[i]) != 1) {
+                n = i;
+                break;
+            }
+        }
+        sort(arr, n, sizeof(int), compareInt);
+        printf("排序后结果: ");
+        for (i = 0; i < n; i++) {
+            printf("%d%s", arr[i], (i == n - 1) ? "\n" : " ");
+        }
+        break;
+      }
+      case 2: {
+        float arr[20];
+        int i;
+        for (i = 0; i < n; i++) {
+            if (fscanf(fin, "%f", &arr[i]) != 1) {
+                n = i;
+                break;
+            }
+        }
+        sort(arr, n, sizeof(float), compareFloat);
+        printf("排序后结果: ");
+        for (i = 0; i < n; i++) {
+            printf("%.2f%s", arr[i], (i == n - 1) ? "\n" : " ");
+        }
+        break;
+      }
+      case 3: {
+        char words[20][64];
+        char *ptrs[20];
+        int i;
+        for (i = 0; i < n; i++) {
+            if (fscanf(fin, "%63s", words[i]) != 1) {
+                n = i;
+                break;
+            }
+            ptrs[i] = words[i];
+        }
+        sort(ptrs, n, sizeof(char *), compareString);
+        printf("排序后结果: ");
+        for (i = 0; i < n; i++) {
+            printf("%s%s", ptrs[i], (i == n - 1) ? "\n" : " ");
+        }
+        break;
+      }
+      default:
+        printf("错误: 不支持的choice=%d\n", choice);
+        break;
     }
 
     fclose(fin);

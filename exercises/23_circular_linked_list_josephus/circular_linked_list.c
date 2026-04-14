@@ -4,11 +4,35 @@
 #include <stdlib.h>
 
 Node* create_circular_list(int n) {
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+    if (n <= 0) return NULL;
+    Node* head = NULL;
+    Node* tail = NULL;
+    for (int i = 1; i <= n; ++i) {
+        Node* node = (Node*)malloc(sizeof(Node));
+        if (!node) {
+            free_list(head);
+            return NULL;
+        }
+        node->id = i;
+        node->next = NULL;
+        if (!head) {
+            head = tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+    tail->next = head;
+    return head;
 }
 
 void free_list(Node* head) {
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+    if (!head) return;
+    Node* cur = head->next;
+    while (cur != head) {
+        Node* next = cur->next;
+        free(cur);
+        cur = next;
+    }
+    free(head);
 }

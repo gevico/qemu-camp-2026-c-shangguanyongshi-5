@@ -1,17 +1,17 @@
 // main.c
 #include "myhash.h"
 #include <ctype.h>
+#include <inttypes.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
-void to_lowercase(char *str) {
-  for (; *str; ++str)
-    *str = tolower((unsigned char)*str);
-}
-
-int main() {
+int main(void) {
   HashTable *table = create_hash_table();
+  FILE *file;
+  char line[512];
+  char word_buf[256];
+
   if (!table) {
     fprintf(stderr, "无法创建哈希表\n");
     return 1;
@@ -24,28 +24,44 @@ int main() {
     free_hash_table(table);
     return 1;
   }
-  printf("词典加载完成，共计%ld词条。\n", dict_count);
+  printf("词典加载完成，共计%" PRIu64 "词条。\n", dict_count);
 
-  FILE* file = fopen("text.txt", "r");
+  file = fopen("text.txt", "r");
   if (file == NULL) {
-    fprintf(stderr, "无法打开文件 dict.txt。\n");
+    fprintf(stderr, "无法打开文件 text.txt。\n");
     free_hash_table(table);
     return 1;
   }
 
-  char line[256];
   while (fgets(line, sizeof(line), file) != NULL) {
-    line[strcspn(line, "\n")] = '\0';
+    char *tok;
 
-    if (strlen(line) == 0) {
+    line[strcspn(line, "\r\n")] = '\0';
+    if (strlen(line) == 0)
+      continue;
+
+    for (tok = strtok(line, " \t\n"); tok != NULL;
+         tok = strtok(NULL, " \t\n")) {
+      size_t i;
+      size_t n = 0;
+
+      for (i = 0; tok[i] != '\0' && n + 1 < sizeof(word_buf); i++) {
+        if (isalpha((unsigned char)tok[i]))
+          word_buf[n++] = (char)tolower((unsigned char)tok[i]);
+      }
+      word_buf[n] = '\0';
+      if (n == 0)
         continue;
-    }
 
-    // 使用 strtok 按空格分割单词
-    // TODO: 在这里添加你的代码
-    // I AM NOT DONE
+      const char *tr = hash_table_lookup(table, word_buf);
+      if (tr != NULL)
+        printf("原文: %s\t翻译: %s\n", word_buf, tr);
+      else
+        printf("原文: %s\t未找到该单词的翻译。\n", word_buf);
+    }
   }
 
+  fclose(file);
   free_hash_table(table);
   return 0;
 }
