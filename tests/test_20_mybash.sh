@@ -1,8 +1,7 @@
-myfile /workspace/exercises/20_mybash/bin/mybash
-myfile /workspace/exercises/20_mybash/obj/mybash/main.o
-
-mysed s/unix/linux/ "unix is opensource. unix is free os."
-
-mytrans /workspace/exercises/20_mybash/src/mytrans/text.txt
-
-mywc /workspace/exercises/20_mybash/src/mytrans/text.txt
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+MYBASH="${REPO_ROOT}/exercises/20_mybash/bin/mybash"
+CMD_FILE="${SCRIPT_DIR}/mybash_cmd.sh"
+exec "${MYBASH}" "${CMD_FILE}"
